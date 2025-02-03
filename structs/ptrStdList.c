@@ -47,7 +47,7 @@ ptrStdList_t* ptrStdListCreateEmpty() {
 
 // create new ptrStdList
 ptrStdList_t* ptrStdListCreateNew() {
-    ptrStdList_t new = ptrStdListCreateEmpty(void);
+    ptrStdList_t* new = ptrStdListCreateEmpty();
     return new;
 }
 
@@ -71,7 +71,6 @@ ptrStdList_t* ptrStdListAdd(ptrStdList_t* target, void* buffer) {
 
     new->element = buffer;
 
-    fprintf(stderr, "New element: self:%p; element:%p; previous:%p; comp: %p\n", new, new->element, new->previous, buffer);
     return new;
 }
 
@@ -117,7 +116,6 @@ void* ptrStdListGetContent(ptrStdList_t* target) {
         exit(EINVAL);
     }
 
-    fprintf(stderr, "%p\n", target->element);
     return target->element;
 }
 
@@ -130,13 +128,11 @@ void ptrStdListRemove(ptrStdList_t* target) {
 
 
     if (target->previous != NULL) {
-        fprintf(stderr, "previous\n");
         target->previous->next = target->next;
     }
 
 
     if (target->next != NULL) {
-        fprintf(stderr, "next\n");
         target->next->previous = target->previous;
     }
 
@@ -155,8 +151,6 @@ void* ptrStdListExtract(ptrStdList_t* target, void* condition, bool(*compElem) (
 
     if (temp == NULL) return NULL;
     void* content = ptrStdListGetContent(temp);
-
-    fprintf(stderr, "grep: temp:%p; previous:%p; next:%p; content:%p;\n", temp, temp->previous, temp->next, content);
     ptrStdListRemove(temp);
 
     return content;

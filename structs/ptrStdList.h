@@ -31,7 +31,7 @@ void ptrStdListPrint(ptrStdList_t* list, void (*printElem) (void*));
 ptrStdList_t* ptrStdListCreateEmpty();
 
 // create new ptrStdList
-ptrStdList_t* ptrStdListCreateNew()
+ptrStdList_t* ptrStdListCreateNew();
 
 // add a new element to a list
 ptrStdList_t* ptrStdListAdd(ptrStdList_t* target, void* buffer);
