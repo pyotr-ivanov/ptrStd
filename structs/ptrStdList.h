@@ -16,7 +16,7 @@ typedef struct __ptrStdList_t {
     void* element;
     struct __ptrStdList_t* previous;
     struct __ptrStdList_t* next;
-}ptrStdList_t;
+}ptrStdList_t, ptrStdQueue_t;
 
 // print out usefull information about ptrStdList on stdout
 void ptrStdListPrintInfo(void);
