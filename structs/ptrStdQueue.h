@@ -36,3 +36,6 @@ void* ptrStdQueuePoll(ptrStdQueue_t* target);
 
 // free a ptrStdList
 void ptrStdQueueFree(ptrStdQueue_t* target, void (*freeElem) (void*));
+
+// convert a ptrStdList to a ptrStdQueue
+ptrStdQueue_t* ptrStdQueueFromList(ptrStdList_t target);

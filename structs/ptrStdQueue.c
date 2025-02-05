@@ -81,3 +81,21 @@ void ptrStdQueueFree(ptrStdQueue_t* target, void (*freeElem) (void*)) {
     free(target);
     return;
 }
+
+// convert a ptrStdList to a ptrStdQueue
+ptrStdQueue_t* ptrStdQueueFromList(ptrStdList_t target) {
+    if (target == NULL) {
+        return NULL;
+    }
+
+    // get last element of the list
+    ptrStdList_t* temp = target;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+
+    if (temp != target) {
+        target->element = temp;
+    }
+    return (ptrStdQueue_t*) target;
+}
