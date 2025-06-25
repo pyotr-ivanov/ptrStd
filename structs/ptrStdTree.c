@@ -3,6 +3,8 @@
  *
  */
 
+#include "ptrStdTree.h"
+
 // print usefull information about ptrStdTree on stdout
 void ptrStdTreePrintInfo() {
     return;
