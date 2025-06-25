@@ -11,7 +11,7 @@ void ptrStdTreePrintInfo() {
 // create an empty node
 ptrStdTreeNode_t* ptrStdTreeCreateNode(void * element) {
     if (element == NULL) {
-        fprintf(stderr, "ptrStdTreeCreateNode: called exit(). element is NULL\n");
+        fprintf(stderr, "ptrStdTreeCreateNode(): called exit(). element is NULL\n");
         exit(EINVAL);
     }
 
@@ -26,7 +26,7 @@ ptrStdTreeNode_t* ptrStdTreeCreateNode(void * element) {
 // create and append a new node to an existing tree.
 ptrStdTreeNode_t* ptrStdTreeAppend(ptrStdTreeNode_t* target, bool (*isGreater) (void*, void*), void* element) {
     if (target == NULL || element == NULL || isGreater == NULL) {
-        fprintf(stderr, "ptrStdTreeAppend: exit due to invalid pointer\n");
+        fprintf(stderr, "ptrStdTreeAppend(): exit due to invalid pointer\n");
         exit(EINVAL);
     }
 
@@ -42,7 +42,7 @@ ptrStdTreeNode_t* ptrStdTreeAppend(ptrStdTreeNode_t* target, bool (*isGreater) (
 // append a new node to child_l
 ptrStdTreeNode_t* ptrStdTreeAppendLow(ptrStdTreeNode_t* target, void* element) {
     if (target == NULL || element == NULL) {
-        fprintf(stderr, "ptrStdTreeAppend: exit due to invalid pointer\n");
+        fprintf(stderr, "ptrStdTreeAppend(): exit due to invalid pointer\n");
         exit(EINVAL);
     }
     ptrStdTreeNode_t* new = ptrStdTreeCreateNode(element);
@@ -55,7 +55,7 @@ ptrStdTreeNode_t* ptrStdTreeAppendLow(ptrStdTreeNode_t* target, void* element) {
 // append a new node to child_h
 ptrStdTreeNode_t* ptrStdTreeAppendHigh(ptrStdTreeNode_t* target, void* element) {
     if (target == NULL || element == NULL) {
-        fprintf(stderr, "ptrStdTreeAppend: exit due to invalid pointer\n");
+        fprintf(stderr, "ptrStdTreeAppend(): exit due to invalid pointer\n");
         exit(EINVAL);
     }
     ptrStdTreeNode_t* new = ptrStdTreeCreateNode(element);
@@ -69,7 +69,7 @@ ptrStdTreeNode_t* ptrStdTreeAppendHigh(ptrStdTreeNode_t* target, void* element) 
 void ptrStdTreeFree(ptrStdTreeNode_t* target, void (*freeElement) (void)) {
     if (target == NULL) return;
     if (freeElement == NULL) {
-        fprintf(stderr, "ptrStdTreeFree: exit due to invalid pointer\n");
+        fprintf(stderr, "ptrStdTreeFree(): exit due to invalid pointer\n");
         exit(EINVAL);
     }
 
@@ -107,7 +107,7 @@ ptrStdTreeNode_t* ptrStdTreeSearch(ptrStdTreeNode_t* target, void* condition, bo
 // return element of node
 void* ptrStdTreeGetContent(ptrStdTreeNode_t* target) {
     if (target == NULL) {
-        fprintf(stderr, "ptrStdTreeGetContent: exit due to invalid pointer\n");
+        fprintf(stderr, "ptrStdTreeGetContent(): exit due to invalid pointer\n");
         exit(EINVAL);
     }
     return target->element;
@@ -116,24 +116,24 @@ void* ptrStdTreeGetContent(ptrStdTreeNode_t* target) {
 // return lowest valued node of the tree
 ptrStdTreeNode_t* ptrStdTreeGetLowest(ptrStdTreeNode_t* target) {
     if (target == NULL) {
-        fprintf(stderr, "ptrStdTreeGetLowest: exit due to invalid pointer\n");
+        fprintf(stderr, "ptrStdTreeGetLowest(): exit due to invalid pointer\n");
         exit(EINVAL);
     }
 
     if (target->child_l == NULL) {
-        return target->element;
+        return target;
     } else return ptrStdTreeGetLowest(target->child_l);
 }
 
 // return highest valued node of the tree
 ptrStdTreeNode_t* ptrStdTreeGetHighest(ptrStdTreeNode_t* target) {
     if (target == NULL) {
-        fprintf(stderr, "ptrStdTreeGetHighest: exit due to invalid pointer\n");
+        fprintf(stderr, "ptrStdTreeGetHighest(): exit due to invalid pointer\n");
         exit(EINVAL);
     }
 
     if (target->child_h == NULL) {
-        return target->element;
+        return target;
     } else return ptrStdTreeGetLowest(target->child_h);
 }
 
@@ -144,10 +144,41 @@ ptrStdTreeNode_t* ptrStdTreeRemove(ptrStdTreeNode_t* target) {
         exit(EINVAL);
     }
 
-    if (parent == NULL) {
+    if (target->parent == NULL) {
+        if (target->child_l != NULL) {
+            ptrStdTreeNode_t* newroot = target->child_l;
 
+            if (target->child_h != NULL) {
+                ptrStdTreeNode_t* branch = target->child_h;
+                ptrStdTreeNode_t* insert = ptrStdTreeGetHighest(target->child_l);
+                branch->parent = insert;
+                insert->child_h = branch;
+            }
+            newroot->parent = NULL;
+            free(target);
+            return newroot;
+
+        } else if (target->child_h != NULL){
+            ptrStdTreeNode_t* newroot = target->child_h;
+            newroot->parent = NULL;
+            free(target);
+            return newroot;
+        } else {
+            free(target);
+            return NULL;
+        }
     }
 }
 
 // search for an element in the tree, return its content and remove its node from the tree
-void* ptrStdTreeExtract(ptrStdTreeNode_t* target, void* condition, bool (*compElem) (void*, void*), bool (*isGreater) (void*, void*))
+void* ptrStdTreeExtract(ptrStdTreeNode_t* target, void* condition, bool (*compElem) (void*, void*), bool (*isGreater) (void*, void*)) {
+    if (target == NULL || condition == NULL || compElem == NULL || isGreater == NULL) {
+        fprintf(stderr, "ptrStdTreeExtract(): exit due to invalid pointer\n");
+        exit(EINVAL);
+    }
+
+    ptrStdTreeNode_t* object = ptrStdTreeSearch(target, condition, compElem, isGreater);
+    void * content = ptrStdTreeGetContent(object);
+    ptrStdTreeRemove(object);
+    return content;
+}
