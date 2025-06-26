@@ -56,4 +56,4 @@ ptrStdTreeNode_t* ptrStdTreeGetHighest(ptrStdTreeNode_t* target);
 ptrStdTreeNode_t* ptrStdTreeRemove(ptrStdTreeNode_t* target);
 
 // search for an element in the tree, return its content and remove its node from the tree
-void* ptrStdTreeExtract(ptrStdTreeNode_t* target, void* condition, bool (*compElem) (void*, void*), bool (*isGreater) (void*, void*))
+void* ptrStdTreeExtract(ptrStdTreeNode_t* target, void* condition, bool (*compElem) (void*, void*), bool (*isGreater) (void*, void*));
