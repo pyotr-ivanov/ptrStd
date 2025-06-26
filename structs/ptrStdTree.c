@@ -3,9 +3,38 @@
  *
  */
 
+#include "ptrStdTree.h"
+
 // print usefull information about ptrStdTree on stdout
 void ptrStdTreePrintInfo() {
     return;
+}
+
+// print tree to stderr
+void ptrStdTreePrintTreeStep(ptrStdTreeNode_t* target, void (*printElement) (void*)) {
+    if (target == NULL) {
+        fprintf(stderr, "NULL");
+        return;
+    }
+
+    printElement(target->element);
+    fprintf(stderr, "(");
+    ptrStdTreePrintTreeStep(target->child_l, printElement);
+    fprintf(stderr, ", ");
+    ptrStdTreePrintTreeStep(target->child_h, printElement);
+    fprintf(stderr, ") ");
+    return;
+}
+
+void ptrStdTreePrintTree(ptrStdTreeNode_t* target, void (*printElement) (void*)) {
+    if (printElement == NULL) {
+        fprintf(stderr, "ptrStdTreePrintTree(): exit due to invalid pointer.\n");
+        exit(EINVAL);
+    }
+
+    fprintf(stderr, "ptrStdTreePrintTree(): \n");
+    ptrStdTreePrintTreeStep(target, printElement);
+    fprintf(stderr, "\n");
 }
 
 // create an empty node
@@ -48,7 +77,7 @@ ptrStdTreeNode_t* ptrStdTreeAppendLow(ptrStdTreeNode_t* target, void* element) {
     ptrStdTreeNode_t* new = ptrStdTreeCreateNode(element);
     target->child_l = new;
     new->parent = target;
-    new->depth = target->depth + 1
+    new->depth = target->depth + 1;
     return new;
 }
 
@@ -61,12 +90,12 @@ ptrStdTreeNode_t* ptrStdTreeAppendHigh(ptrStdTreeNode_t* target, void* element) 
     ptrStdTreeNode_t* new = ptrStdTreeCreateNode(element);
     target->child_h = new;
     new->parent = target;
-    new->depth = target->depth + 1
+    new->depth = target->depth + 1;
     return new;
 }
 
 // free a tree and its elements
-void ptrStdTreeFree(ptrStdTreeNode_t* target, void (*freeElement) (void)) {
+void ptrStdTreeFree(ptrStdTreeNode_t* target, void (*freeElement) (void*)) {
     if (target == NULL) return;
     if (freeElement == NULL) {
         fprintf(stderr, "ptrStdTreeFree(): exit due to invalid pointer\n");
@@ -144,30 +173,30 @@ ptrStdTreeNode_t* ptrStdTreeRemove(ptrStdTreeNode_t* target) {
         exit(EINVAL);
     }
 
-    if (target->parent == NULL) {
-        if (target->child_l != NULL) {
-            ptrStdTreeNode_t* newroot = target->child_l;
-
-            if (target->child_h != NULL) {
-                ptrStdTreeNode_t* branch = target->child_h;
-                ptrStdTreeNode_t* insert = ptrStdTreeGetHighest(target->child_l);
-                branch->parent = insert;
-                insert->child_h = branch;
-            }
-            newroot->parent = NULL;
-            free(target);
-            return newroot;
-
-        } else if (target->child_h != NULL){
-            ptrStdTreeNode_t* newroot = target->child_h;
-            newroot->parent = NULL;
-            free(target);
-            return newroot;
-        } else {
-            free(target);
-            return NULL;
+    ptrStdTreeNode_t* replacement = NULL;
+    if (target->child_l != NULL) {              // handle existing child_l
+        replacement = target->child_l;
+        if (target->child_h != NULL) {          // append child_h to replacement
+            ptrStdTreeNode_t* branch = target->child_h;
+            ptrStdTreeNode_t* insert = ptrStdTreeGetHighest(replacement);
+            branch->parent = insert;
+            insert->child_h = branch;
         }
-    }
+    
+   } else if (target->child_h != NULL) {   // child_l is empty, move child_h upstream
+           replacement = target->child_h;            
+       }
+
+   // connect parent and replacement
+   if (replacement != NULL) replacement->parent = target->parent;
+   if (target->parent != NULL && target == target->parent->child_l) {   // target is child_l on parent
+       target->parent->child_l = replacement;
+   } else if (target->parent != NULL){                                // target is child_h on parent
+       target->parent->child_h = replacement;
+   }
+
+   free(target);
+   return replacement;
 }
 
 // search for an element in the tree, return its content and remove its node from the tree
