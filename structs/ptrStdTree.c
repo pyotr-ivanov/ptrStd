@@ -13,7 +13,7 @@ void ptrStdTreePrintInfo() {
 // print tree to stderr
 void ptrStdTreePrintTreeStep(ptrStdTreeNode_t* target, void (*printElement) (void*)) {
     if (target == NULL) {
-        fprintf(stderr, "NULL");
+        fprintf(stderr, "*");
         return;
     }
 
@@ -22,7 +22,7 @@ void ptrStdTreePrintTreeStep(ptrStdTreeNode_t* target, void (*printElement) (voi
     ptrStdTreePrintTreeStep(target->child_l, printElement);
     fprintf(stderr, ", ");
     ptrStdTreePrintTreeStep(target->child_h, printElement);
-    fprintf(stderr, ") ");
+    fprintf(stderr, ")");
     return;
 }
 
@@ -163,7 +163,7 @@ ptrStdTreeNode_t* ptrStdTreeGetHighest(ptrStdTreeNode_t* target) {
 
     if (target->child_h == NULL) {
         return target;
-    } else return ptrStdTreeGetLowest(target->child_h);
+    } else return ptrStdTreeGetHighest(target->child_h);
 }
 
 // remove a node from a tree
