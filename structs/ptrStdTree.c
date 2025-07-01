@@ -193,7 +193,7 @@ ptrStdTreeNode_t* ptrStdTreeRemove(ptrStdTreeNode_t* target) {
        target->parent->child_l = replacement;
    } else if (target->parent != NULL){                                // target is child_h on parent
        target->parent->child_h = replacement;
-   }
+   }                                            // TODO:: fix things
 
    free(target);
    return replacement;
