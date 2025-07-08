@@ -191,11 +191,19 @@ ptrStdTreeNode_t* ptrStdTreeRemove(ptrStdTreeNode_t* target) {
    if (replacement != NULL) replacement->parent = target->parent;
    if (target->parent != NULL && target == target->parent->child_l) {   // target is child_l on parent
        target->parent->child_l = replacement;
+       free(target);
    } else if (target->parent != NULL){                                // target is child_h on parent
        target->parent->child_h = replacement;
-   }                                            // TODO:: fix things (removing tree root is not supported yet.)
+       free(target);
+   } else {                                                           // removed node is root of tree ==> copy replacement into parent, free old replacement node
+        ptrStdTreeNode_t* override = replacement;
+        target->element = override->element;
+        target->child_l = override->child_l;
+        target->child_h = override->child_h;
+        replacement = target;
+        free(override);
+   }
 
-   free(target);
    return replacement;
 }
 
