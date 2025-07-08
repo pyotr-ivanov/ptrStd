@@ -193,7 +193,7 @@ ptrStdTreeNode_t* ptrStdTreeRemove(ptrStdTreeNode_t* target) {
        target->parent->child_l = replacement;
    } else if (target->parent != NULL){                                // target is child_h on parent
        target->parent->child_h = replacement;
-   }                                            // TODO:: fix things
+   }                                            // TODO:: fix things (removing tree root is not supported yet.)
 
    free(target);
    return replacement;
@@ -207,6 +207,11 @@ void* ptrStdTreeExtract(ptrStdTreeNode_t* target, void* condition, bool (*compEl
     }
 
     ptrStdTreeNode_t* object = ptrStdTreeSearch(target, condition, compElem, isGreater);
+
+    if (object == NULL) {
+        return NULL;
+    }
+
     void * content = ptrStdTreeGetContent(object);
     ptrStdTreeRemove(object);
     return content;
